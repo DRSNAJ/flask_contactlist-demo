@@ -21,15 +21,9 @@ def create_contact():
             jsonify({"message": "Please include a first name, last name, and email"}),
             400
         )
-        
-# {
-#     "firstName": "john",
-#     "lastName": "doe",
-#     "email": "jd@gmail.com",
-#     "phone": "00774787"
-# }        
-    
+
     new_contact = Contact(first_name=first_name, last_name=last_name, email=email, phone=phone)
+
     try:
         db.session.add(new_contact)
         db.session.commit()
@@ -37,6 +31,57 @@ def create_contact():
         return jsonify({str(e)}), 400
     
     return jsonify({"Message": "User Created!"}), 201
+
+
+@app.route("/contacts/<int:cnt_id>", methods=["PATCH"])
+def update_contact(cnt_id):
+    """This function is used to update existing contacts and then commit them to the db
+
+    Args:
+        cnt_id (int): id, the primary key of the contact record to be updated
+
+    Returns:
+        json: json object spesifying if the record was successfully updated or not
+    """
+    contact = Contact.query.get(cnt_id)
+    if not contact:
+        return (
+            jsonify({"Message":"Record not found"}), 404
+        )
+    
+    contact.first_name = request.json.get("firstName",  contact.first_name)
+    contact.last_name = request.json.get("lastName",  contact.first_name)
+    contact.email = request.json.get("email",  contact.first_name) 
+    contact.phone = request.json.get("phone",  contact.first_name) 
+    
+    db.session.commit()
+    return (
+        jsonify({"Message":"Record updated"}), 200
+        )   
+    
+@app.route("/contacts/<int:cnt_id>", methods=["DELETE"])
+def delete_record(cnt_id):
+    """Function used to delete contacts in the db based on ID
+
+    Args:
+        cnt_id (int): id, the primary key of the contact record to be updated
+
+    Returns:
+        _type_: json object spesifying if the record was successfully deleted or not
+    """
+    contact = Contact.query.get(cnt_id)
+    if not contact:
+        return (
+            jsonify({"Message":"Record not found"}), 404
+        )
+    
+    db.session.delete(contact)
+    db.session.commit()
+    
+    return (
+        jsonify({"Message":"Record successfully deleted"}), 200
+    )
+
 
 if __name__ == "__main__":
     with app.app_context():

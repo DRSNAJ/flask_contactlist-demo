@@ -5,8 +5,8 @@ from models import Contact      # importing our database model from models files
 @app.route("/contacts", methods=["GET"]) # modifier 
 def get_contacts():
     contacts = Contact.query.all()
-    json_contacts = list(map(lambda x:x.to_json, contacts)) # using a lambda function to map to map all of the contacts into a json object 
-    # a lambda function is a one line function in python
+    json_contacts = list(map(lambda x:x.to_json(), contacts))# using a lambda function to map to map all of the contacts into a json object 
+    # a lambda function is a one line function in python   
     return jsonify({"contacts": json_contacts})
 
 @app.route("/contacts", methods=["POST"])
@@ -21,6 +21,13 @@ def create_contact():
             jsonify({"message": "Please include a first name, last name, and email"}),
             400
         )
+        
+# {
+#     "firstName": "john",
+#     "lastName": "doe",
+#     "email": "jd@gmail.com",
+#     "phone": "00774787"
+# }        
     
     new_contact = Contact(first_name=first_name, last_name=last_name, email=email, phone=phone)
     try:

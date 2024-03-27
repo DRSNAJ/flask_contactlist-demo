@@ -9,7 +9,7 @@ def get_contacts():
     # a lambda function is a one line function in python   
     return jsonify({"contacts": json_contacts})
 
-@app.route("/contacts", methods=["POST"])
+@app.route("/add_contact", methods=["POST"])
 def create_contact():
     first_name = request.json.get("firstName")
     last_name = request.json.get("lastName")
@@ -33,7 +33,7 @@ def create_contact():
     return jsonify({"Message": "User Created!"}), 201
 
 
-@app.route("/contacts/<int:cnt_id>", methods=["PATCH"])
+@app.route("/update_contact/<int:cnt_id>", methods=["PATCH"])
 def update_contact(cnt_id):
     """This function is used to update existing contacts and then commit them to the db
 
@@ -59,7 +59,7 @@ def update_contact(cnt_id):
         jsonify({"Message":"Record updated"}), 200
         )   
     
-@app.route("/contacts/<int:cnt_id>", methods=["DELETE"])
+@app.route("/delete_contact/<int:cnt_id>", methods=["DELETE"])
 def delete_record(cnt_id):
     """Function used to delete contacts in the db based on ID
 

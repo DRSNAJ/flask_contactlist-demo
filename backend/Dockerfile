@@ -17,4 +17,5 @@ COPY . .
 # Exposing the port for our API to be accesses publically 
 EXPOSE 5000
 
-CMD [ "python", "main.py" ]
+CMD [ "gunicorn", "wsgi:app", "-b 0.0.0.0:5000", "-w 2", "-t 30" ]
+

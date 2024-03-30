@@ -19,7 +19,7 @@ const ContactForm = ({ existingContact = {}, updateCallback }) => {
       phone,
     };
     const url =
-      "http://127.0.0.1:5000/" +
+      `${import.meta.env.VITE_REACT_APP_API_URL}/` +
       (updating ? `update_contact/${existingContact.id}` : "add_contact");
     const options = {
       method: updating ? "PATCH" : "POST",

@@ -1,4 +1,5 @@
-from config import db # importing our database model from config
+from flask_sqlalchemy import SQLAlchemy     # ORM used to interface with our SQL db
+db = SQLAlchemy()
 class Contact(db.Model):
 # defining the structure of our database 
     id = db.Column(db.Integer, primary_key=True)    # the databases primary key

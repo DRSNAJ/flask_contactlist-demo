@@ -1,6 +1,8 @@
 from flask import request, jsonify      # importing library to send HTTP API requests (GET, POST, PUT/PATCH, DELETE, ...) and json formatter
-from config import app, db      # importing our app and db objects created in our config file
+from config import createApp      # importing our app and db objects created in our config file
 from models import Contact      # importing our database model from models files
+
+app, db = createApp()
 
 @app.route("/contacts", methods=["GET"]) # modifier 
 def get_contacts():

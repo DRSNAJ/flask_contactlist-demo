@@ -8,7 +8,7 @@ class ConfigApp:
     
 class TestConfig(ConfigApp):    
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
     
 def createApp(app_config = ConfigApp):
     app = Flask(__name__) # initiating our flask app

@@ -5,15 +5,21 @@ FROM node:18 as Build
 WORKDIR /frontend
 
 # copying the reqiorements file into the docker working directory
-COPY ./fontend/package*.json ./ 
+COPY package*.json ./ 
 
 # Installing dependencies (adding node modules folder)
 RUN npm install 
 
 # copying everything from current local directory to the docker working directory
-COPY /fontend .
+COPY . .
 
-ENV VITE_REACT_APP_API_URL = http://127.0.0.1:5000
+ARG BACKEND_URL=192.168.1.17:5000
+
+# ENV VITE_REACT_APP_API_URL=http://127.0.0.1:5000
+
+RUN sed -i "s/127.0.0.1:5000/${BACKEND_URL}/g" .env
+
+RUN npm run build
 
 FROM nginx:stable-alpine
 

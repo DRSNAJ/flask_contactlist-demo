@@ -1,13 +1,24 @@
 import React from "react";
+import { useEffect, useState } from "react";
+import loadConfig from "./configLoader";
 
 const ContactList = ({ contacts, updateContact, updateCallback }) => {
+  const [appConfig, setAppConfig] = useState({});
+
+  useEffect(() => {
+    loadConfig().then((config) => {
+      setAppConfig(config);
+      console.log("API URL: ", appConfig.CONTACTS_API_URL);
+    });
+  }, []);
+
   const onDelete = async (id) => {
     try {
       const options = {
         method: "DELETE",
       };
       const response = await fetch(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/delete_contact/${id}`,
+        `http://${appConfig.CONTACTS_API_URL}//delete_contact/${id}`,
         options
       );
       if (response.status == 200) {

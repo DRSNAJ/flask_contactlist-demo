@@ -1,5 +1,6 @@
 import React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import loadConfig from "./configLoader";
 
 const ContactForm = ({ existingContact = {}, updateCallback }) => {
   const [firstName, setFirstName] = useState(existingContact.firstName || "");
@@ -8,6 +9,15 @@ const ContactForm = ({ existingContact = {}, updateCallback }) => {
   const [phone, setPhone] = useState(existingContact.phone || "");
 
   const updating = Object.entries(existingContact).length !== 0;
+
+  const [appConfig, setAppConfig] = useState({});
+
+  useEffect(() => {
+    loadConfig().then((config) => {
+      setAppConfig(config);
+      console.log("API URL: ", appConfig.CONTACTS_API_URL);
+    });
+  }, []);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +29,7 @@ const ContactForm = ({ existingContact = {}, updateCallback }) => {
       phone,
     };
     const url =
-      `${import.meta.env.VITE_REACT_APP_API_URL}/` +
+      `http://${appConfig.CONTACTS_API_URL}/` +
       (updating ? `update_contact/${existingContact.id}` : "add_contact");
     const options = {
       method: updating ? "PATCH" : "POST",

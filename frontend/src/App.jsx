@@ -2,19 +2,33 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import ContactList from "./ContactList";
 import ContactForm from "./ContactForm";
+import loadConfig from "./configLoader";
 
 function App() {
   const [contacts, setContacts] = useState([]);
+  const [appConfig, setAppConfig] = useState({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentContact, setCurrentContact] = useState({});
 
   useEffect(() => {
-    fetchContacts();
+    if (appConfig.CONTACTS_API_URL) {
+      fetchContacts();
+    }
+  }, [appConfig.CONTACTS_API_URL]);
+
+  useEffect(() => {
+    loadConfig().then((config) => {
+      setAppConfig(config);
+      console.log("API URL: ", appConfig.CONTACTS_API_URL);
+    });
   }, []);
 
   const fetchContacts = async () => {
-    const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/contacts`);
+    const response = await fetch(
+      ` http://${appConfig.CONTACTS_API_URL}/contacts`
+    );
+
     const data = await response.json();
     setContacts(data.contacts);
     console.log(data.contacts);

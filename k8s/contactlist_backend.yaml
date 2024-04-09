@@ -1,0 +1,11 @@
+appVersion: v1
+kind: Deployment
+metadata:
+  name: contactlist_backend
+  labels:
+    app: contactlist
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contactlist

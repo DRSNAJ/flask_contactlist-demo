@@ -14,7 +14,7 @@ function App() {
   }, []);
 
   const fetchContacts = async () => {
-    const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/contacts`);
+    const response = await fetch(`/contacts_api/contacts`);
     const data = await response.json();
     setContacts(data.contacts);
     console.log(data.contacts);

@@ -6,13 +6,13 @@ FROM python:3.11-slim
 WORKDIR /backend
 
 # defining the requiremets file containing all the dependencies relative to the WORKDIR
-COPY ./backend/requirements.txt requirements.txt
+COPY ./requirements.txt requirements.txt
 
 # Running the install on the dependencies 
 RUN pip install -r requirements.txt
 
 # copying our source files 
-COPY ./backend .
+COPY . .
 
 # Exposing the port for our API to be accesses publically 
 EXPOSE 5000

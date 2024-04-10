@@ -26,6 +26,6 @@ def test_read_contacts(client):
     THEN check that the firstName, lastName, email, and phone are all in the response
     """
 
-    response = client.get('/contacts')
+    response = client.get('/contacts_api/contacts')
     assert response.status_code == 200
     assert b'{"contacts":[{"email":"test_email","firstName":"test_first_name","id":1,"lastName":"test_last_name","phone":"T05848"}]}\n' in response.data

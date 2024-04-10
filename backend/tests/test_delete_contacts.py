@@ -30,7 +30,7 @@ def test_delete_contact(client):
     """
     
     for i in [1, 10, 5, 7, 8]:
-        reponse = client.delete(f'/delete_contact/{i}')
+        reponse = client.delete(f'/contacts_api/delete_contact/{i}')
         assert reponse.status_code == 200
     
     with app.app_context():

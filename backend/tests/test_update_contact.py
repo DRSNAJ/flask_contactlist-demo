@@ -35,7 +35,7 @@ def test_update_contact(client):
         "email": f"email_{i}_E",
         "phone": f"T48_{i}_E"
         }
-        response = client.patch(f'/update_contact/{i}', json = edited_contact)
+        response = client.patch(f'/contacts_api/update_contact/{i}', json = edited_contact)
         
         with app.app_context():
             db_edited = db.session.query(Contact).filter_by(id = i).first().to_json()

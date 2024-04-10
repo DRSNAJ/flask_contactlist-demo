@@ -24,7 +24,7 @@ def test_create_contact_success(client):
         "email": "test_email",
         "phone": "T488545"
     }
-    response = client.post("/add_contact", json = test_contact)
+    response = client.post("/contacts_api/add_contact", json = test_contact)
     assert response.status_code == 201
     assert b'{"Message":"User Created!"}' in response.data
     
@@ -41,7 +41,7 @@ def test_create_contact_LastName_fail(client):
         "email": "test_email",
         "phone": "T488545"
     }
-    response = client.post("/add_contact", json = test_contact)
+    response = client.post("/contacts_api/add_contact", json = test_contact)
     assert response.status_code == 400
     assert b'{"message":"Please include a first name, last name, and email"}\n' in response.data
     
@@ -58,7 +58,7 @@ def test_create_contact_FirstName_fail(client):
         "email": "test_email",
         "phone": "T488545"
     }
-    response = client.post("/add_contact", json = test_contact)
+    response = client.post("/contacts_api/add_contact", json = test_contact)
     assert response.status_code == 400
     assert b'{"message":"Please include a first name, last name, and email"}\n' in response.data
     
@@ -76,6 +76,6 @@ def test_create_contact_Email_fail(client):
         "email": "",
         "phone": "T488545"
     }
-    response = client.post("/add_contact", json = test_contact)
+    response = client.post("/contacts_api/add_contact", json = test_contact)
     assert response.status_code == 400
     assert b'{"message":"Please include a first name, last name, and email"}\n' in response.data

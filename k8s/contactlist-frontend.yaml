@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: contactlist-frontend-deployment
 spec:
-  reeplicas: 2
+  replicas: 2
   selector:
     matchLabels:
       app: webapp
@@ -13,14 +13,20 @@ spec:
         app: webapp
     spec:
       containers:
-      - name: contactlist-backend
-        image: drsnaj/contactlist_frontend
+      - name: contactlist-frontend
+        image: drsnaj/contactlist_frontend:v2.1
         resources:
           limits:
             memory: "128Mi"
             cpu: "500m"
         ports:
-        - containerPort: 5000
+        - containerPort: 80
+        env:
+        - name: APP_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: contactlist-config
+              key: contactlist-api
 
 ---
 apiVersion: v1
@@ -35,4 +41,4 @@ spec:
   - protocol: TCP
     port: 80
     targetPort: 80
-    nodePort: 81
+    nodePort: 30100

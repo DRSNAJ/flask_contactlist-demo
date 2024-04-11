@@ -5,4 +5,4 @@ metadata:
   labels:
     app: contactlist
 data:
-  contactlist-api: contactlist-backend-service
+  contactlist-api: http://10.99.152.225:5000

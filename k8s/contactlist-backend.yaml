@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: contactlist
-        image: drsnaj/contactlist_backend
+        image: drsnaj/contactlist_backend:v2.1
         resources:
           limits:
             memory: "128Mi"
@@ -27,8 +27,10 @@ kind: Service
 metadata:
   name: contactlist-backend-service
 spec:
+  type: NodePort
   selector:
     app: contactlist
   ports:
   - port: 5000
     targetPort: 5000
+    nodePort: 31516

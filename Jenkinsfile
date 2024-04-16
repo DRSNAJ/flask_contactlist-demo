@@ -2,8 +2,8 @@ def backend_img
 def frontend_img
 pipeline {
     environment {
-        DH_backend_registy = "drsnaj/contactlist_backend" 
-        DH_frontend_registy = "drsnaj/contactlist_frontend" 
+        BACKEND_REGISTRY = "drsnaj/contactlist_backend" 
+        FRONTEND_REGISTRY = "drsnaj/contactlist_frontend" 
         docker_Credential = 'docker_hub-cred'
         github_Credential = 'github-cred'
         dockerImage = ''
@@ -29,15 +29,28 @@ pipeline {
                     pip install pytest
                     cd tests/
                     pytest
+                    cd ..
+                    nohup python main.py  > flask.log 2>&1 &
+                    sleep 5
+                    
+                    pkill -f main.py
+
                     '''
                 }
         }
         
         stage ('Clean Up'){
             steps{
-                sh returnStatus: true, script: 'docker stop $(docker ps -a | grep ${JOB_NAME} | awk \'{print $1}\')'
-                sh returnStatus: true, script: 'docker rmi $(docker images | grep ${DH_backend_registy} | awk \'{print $3}\') --force' //this will delete all images
-                sh returnStatus: true, script: 'docker rm ${JOB_NAME}'
+                // sh returnStatus: true, script: 'docker stop $(docker ps -a | grep ${JOB_NAME}-2 | awk \'{print $1}\')'
+                // sh returnStatus: true, script: 'docker rmi $(docker images | grep ${BACKEND_REGISTRY} | awk \'{print $3}\') --force' //this will delete all images
+                // sh returnStatus: true, script: 'docker rm ${JOB_NAME}-2'
+                
+                // sh returnStatus: true, script: 'docker stop $(docker ps -a | grep ${JOB_NAME}-1 | awk \'{print $1}\')'
+                // sh returnStatus: true, script: 'docker rmi $(docker images | grep ${FRONTEND_REGISTRY} | awk \'{print $3}\') --force' //this will delete all images
+                // sh returnStatus: true, script: 'docker rm ${JOB_NAME}-1'
+                sh returnStatus: true, script: 'minikube stop'
+                sh returnStatus: true, script: 'minikube delete'
+
                 sh 'rm -rf venv'
             }
         }
@@ -48,16 +61,16 @@ pipeline {
                     parallel(
                         frontend: {
                             script {
-                                frontend_img = DH_frontend_registy + ":1.${env.BUILD_ID}"
+                                frontend_img = FRONTEND_REGISTRY + ":v2.1.${env.BUILD_ID}"
                                 println ("${frontend_img}")
-                                dockerImage = docker.build("${frontend_img}", '-f frontend/Dockerfile frontend/')
+                                frontendDockerImage = docker.build("${frontend_img}", '-f frontend/deployments/Dockerfile frontend/')
                             }
                         },
                         backend: {
                             script {
-                                backend_img = DH_backend_registy + ":1.${env.BUILD_ID}"
+                                backend_img = BACKEND_REGISTRY + ":v2.1.${env.BUILD_ID}"
                                 println ("${backend_img}")
-                                dockerImage = docker.build("${backend_img}", '-f backend/Dockerfile backend/')
+                                backendDockerImage = docker.build("${backend_img}", '-f backend/deployments/Dockerfile backend/')
                             }
                         }
 
@@ -70,7 +83,11 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry( 'https://registry.hub.docker.com ', docker_Credential ) {
-                        dockerImage.push()
+                        frontendDockerImage.push()
+                    }
+
+                    docker.withRegistry( 'https://registry.hub.docker.com ', docker_Credential ) {
+                        backendDockerImage.push()
                     }
                 }
             }
@@ -78,7 +95,10 @@ pipeline {
                     
         stage('Deploy') {
            steps {
-                sh label: '', script: "docker run -d --name ${JOB_NAME} -p 5000:5000 ${backend_img}"
+               sh 'minikube start'
+               sh "sed -i 's|drsnaj/contactlist_backend:v2.1|drsnaj/contactlist_backend:v2.1.${env.BUILD_ID}|g' ./k8s/contactlist-backend.yaml"
+               sh "sed -i 's|drsnaj/contactlist_frontend:v2.1|drsnaj/contactlist_frontend:v2.1.${env.BUILD_ID}|g' ./k8s/contactlist-frontend.yaml"
+               sh "kubectl apply -f ./k8s/."
           }
         }
 

@@ -1,8 +1,10 @@
 import React from "react";
 
+// Define a React functional component 'ContactList' that receives props for managing contacts
 const ContactList = ({ contacts, updateContact, updateCallback }) => {
   const onDelete = async (id) => {
     try {
+      // Define the DELETE request options
       const options = {
         method: "DELETE",
       };
@@ -10,16 +12,20 @@ const ContactList = ({ contacts, updateContact, updateCallback }) => {
         `/contacts_api/delete_contact/${id}`,
         options
       );
+      // If the response is successful (status 200), call the update callback
       if (response.status == 200) {
         updateCallback();
       } else {
+        // Log error if deletion is not successful
         console.error("Failed to delete");
       }
     } catch (error) {
+      // Alert the user if an error occurs in the fetch operation
       alert(error);
     }
   };
 
+  // Render the component
   return (
     <div>
       <h2>Contacts</h2>
@@ -43,15 +49,14 @@ const ContactList = ({ contacts, updateContact, updateCallback }) => {
               <td>
                 <button
                   onClick={() => {
-                    updateContact(contact);
-                    // updateCallback();
+                    updateContact(contact); // Call 'updateContact' with the contact object when clicked
                   }}
                 >
                   Update
                 </button>
                 <button
                   onClick={() => {
-                    onDelete(contact.id);
+                    onDelete(contact.id); // Call 'onDelete' with the contact's id when clicked
                   }}
                 >
                   Delete
@@ -65,4 +70,5 @@ const ContactList = ({ contacts, updateContact, updateCallback }) => {
   );
 };
 
+// Export the 'ContactList' component
 export default ContactList;

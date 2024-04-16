@@ -6,18 +6,31 @@ app, db = createApp()
 
 @app.route("/contacts_api/contacts", methods=["GET"]) # modifier 
 def get_contacts():
-    contacts = Contact.query.all()
+    """Retrieve all contacts from the database and return them as a JSON list.
+
+    Returns:
+        Response: A Flask response object containing the JSON list of contact data.
+    """    
+    contacts = Contact.query.all()  # Query all contact records from the database
     json_contacts = list(map(lambda x:x.to_json(), contacts))# using a lambda function to map to map all of the contacts into a json object 
-    # a lambda function is a one line function in python   
-    return jsonify({"contacts": json_contacts})
+
+    return jsonify({"contacts": json_contacts}) # Return a JSON response with the list of contacts
 
 @app.route("/contacts_api/add_contact", methods=["POST"])
 def create_contact():
+    """Create a new contact record from JSON data provided in the request.
+
+    Returns:
+        Response: A Flask response object with a JSON body indicating success or failure.
+    """
+    
+    # Extract details from JSON request data
     first_name = request.json.get("firstName")
     last_name = request.json.get("lastName")
     email = request.json.get("email") 
     phone = request.json.get("phone") 
     
+    # Validate mandatory fields
     if not first_name or not last_name or not email:
         return (
             jsonify({"message": "Please include a first name, last name, and email"}),
@@ -30,9 +43,9 @@ def create_contact():
         db.session.add(new_contact)
         db.session.commit()
     except Exception as e:
-        return jsonify({str(e)}), 400
+        return jsonify({str(e)}), 400  # Return error if operation fails
     
-    return jsonify({"Message": "User Created!"}), 201
+    return jsonify({"Message": "User Created!"}), 201  # Return success message with HTTP status code 201
 
 
 @app.route("/contacts_api/update_contact/<int:cnt_id>", methods=["PATCH"])
@@ -48,9 +61,9 @@ def update_contact(cnt_id):
     contact = Contact.query.get(cnt_id)
     if not contact:
         return (
-            jsonify({"Message":"Record not found"}), 404
+            jsonify({"Message":"Record not found"}), 404  # Return error if contact is not found
         )
-    
+    # Update the contact's attributes if provided in the request
     contact.first_name = request.json.get("firstName",  contact.first_name)
     contact.last_name = request.json.get("lastName",  contact.first_name)
     contact.email = request.json.get("email",  contact.first_name) 
@@ -58,7 +71,7 @@ def update_contact(cnt_id):
     
     db.session.commit()
     return (
-        jsonify({"Message":"Record updated"}), 200
+        jsonify({"Message":"Record updated"}), 200  # Return success message
         )   
     
 @app.route("/contacts_api/delete_contact/<int:cnt_id>", methods=["DELETE"])
@@ -71,22 +84,22 @@ def delete_record(cnt_id):
     Returns:
         _type_: json object spesifying if the record was successfully deleted or not
     """
-    contact = Contact.query.get(cnt_id)
+    contact = Contact.query.get(cnt_id)  # Retrieve the contact by ID
     if not contact:
         return (
-            jsonify({"Message":"Record not found"}), 404
+            jsonify({"Message":"Record not found"}), 404   # Return error if contact is not found
         )
     
-    db.session.delete(contact)
-    db.session.commit()
+    db.session.delete(contact)  # Remove the contact from the session
+    db.session.commit()  # Commit the deletion to the database
     
     return (
-        jsonify({"Message":"Record successfully deleted"}), 200
+        jsonify({"Message":"Record successfully deleted"}), 200  # Return success message
     )
 
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
+        db.create_all()   # Create database tables before starting the application
         
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)  # Start the application with debugging enabled

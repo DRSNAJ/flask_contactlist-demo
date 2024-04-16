@@ -16,6 +16,3 @@ class Contact(db.Model):
             "email": self.email,
             "phone": self.phone
         }
-
-    # def getNumber(self):
-    #     return self.phone

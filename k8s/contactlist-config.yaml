@@ -1,8 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  # Defining the name of the ConfigMap
   name: contactlist-config
   labels:
+    # Adding a label to identify the application
     app: contactlist
 data:
-  contactlist-api: http://192.168.49.2:31516
+  # Setting the URL for the contact list API, to be used by our front-end container to interface with the backend
+  contactlist-api: http://192.168.49.2:30050

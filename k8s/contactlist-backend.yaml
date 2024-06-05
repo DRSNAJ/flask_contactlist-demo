@@ -1,36 +1,51 @@
+# Defining the API version and kind of Kubernetes resource (Deployment)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  # Name of the deployment
   name: contactlist-backend-deployment
 spec:
+  # Number of replicas of the pod to be created
   replicas: 1
   selector:
     matchLabels:
+      # Label to match the pods with this deployment
       app: contactlist
   template:
     metadata:
       labels:
+        # Label applied to the pod template
         app: contactlist
     spec:
       containers:
       - name: contactlist
+        # Docker image for the container
         image: drsnaj/contactlist_backend:v2.1
         resources:
           limits:
+            # Maximum memory and CPU resources for the container
             memory: "128Mi"
             cpu: "500m"
         ports:
-        - containerPort: 5000
+        - # Port exposed by the container
+          containerPort: 5000
+# Defining the API version and kind of Kubernetes resource (Service)
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  # Name of the service
   name: contactlist-backend-service
 spec:
+  # Type of the service, NodePort in this case
   type: NodePort
   selector:
+    # Selector to match the pods with this service
     app: contactlist
   ports:
-  - port: 5000
+  - # Port on which the service is exposed
+    port: 5000
+    # Target port on the container
     targetPort: 5000
-    nodePort: 31516
+    # Node port to access the service from outside the cluster
+    nodePort: 30050

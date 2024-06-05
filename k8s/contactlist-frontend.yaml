@@ -1,44 +1,59 @@
+# Defining the API version and kind for the Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  # Naming the deployment
   name: contactlist-frontend-deployment
 spec:
+  # Setting the number of replicas (pods) to be created
   replicas: 2
   selector:
     matchLabels:
+      # Matching the label 'app' to identify the pods for this deployment
       app: webapp
   template:
     metadata:
       labels:
+        # Labeling the pods with 'app: webapp' for identification
         app: webapp
     spec:
       containers:
       - name: contactlist-frontend
+        # Specifying the container image to be used
         image: drsnaj/contactlist_frontend:v2.1
         resources:
           limits:
+            # Setting resource limits for the container
             memory: "128Mi"
             cpu: "500m"
         ports:
         - containerPort: 80
         env:
         - name: APP_API_URL
+          # Using a ConfigMap to set the environment variable for the API URL
           valueFrom:
             configMapKeyRef:
               name: contactlist-config
               key: contactlist-api
 
+# Defining the API version and kind for the Service
 ---
 apiVersion: v1
 kind: Service
 metadata:
+  # Naming the service
   name: contactlist-frontend-service
 spec:
+  # Setting the service type to NodePort to expose the service externally
   type: NodePort
   selector:
+    # Selecting pods with the label 'app: webapp' to associate with this service
     app: webapp
   ports:
   - protocol: TCP
+    # Setting the port on which the service will be accessible
     port: 80
+    # Mapping the service port to the container port
     targetPort: 80
+    # Defining the NodePort to expose the service on each node in the cluster
     nodePort: 30100

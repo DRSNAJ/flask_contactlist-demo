@@ -1,34 +1,29 @@
-# using a base image of Node to build our React frontend
+# Using a base image of Node.js to build our React frontend
 FROM node:18 as Build
 
-# setting docker working dir all following instructions will happen here
+# Setting the Docker working directory; all following instructions will happen here
 WORKDIR /frontend
 
-# copying the reqiorements file into the docker working directory
+# Copying the package.json and package-lock.json files into the Docker working directory
 COPY package*.json ./ 
 
-# Installing dependencies (adding node modules folder)
+# Installing dependencies (this will create the node_modules folder)
 RUN npm install 
 
-# copying everything from current local directory to the docker working directory
+# Copying everything from the current local directory to the Docker working directory
 COPY . .
 
-# ARG BACKEND_URL=192.168.1.17:5000
-
-# # ENV VITE_REACT_APP_API_URL=http://127.0.0.1:5000
-
-# RUN sed -i "s/127.0.0.1:5000/${BACKEND_URL}/g" .env
-
+# Building the React application
 RUN npm run build
 
+# Using a base image of Nginx to serve the built React frontend
 FROM nginx:stable-alpine
 
+# Exposing port 80 for the Nginx server
 EXPOSE 80
 
-COPY --from=Build frontend/build /usr/share/nginx/html
+# Copying the built files from the build stage to the Nginx default public directory
+COPY --from=Build /frontend/build /usr/share/nginx/html
+
+# Copying the Nginx configuration file
 COPY default.conf /etc/nginx/conf.d/default.conf
-
-
-
-# CMD [ "nginx", "-g", "daemon off;" ]
-

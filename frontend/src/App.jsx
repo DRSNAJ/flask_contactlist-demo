@@ -14,7 +14,7 @@ function App() {
   }, []);
 
   const fetchContacts = async () => {
-    const response = await fetch(`http://127.0.0.1:5000/contacts_api/contacts`); // Make an API call to fetch contacts
+    const response = await fetch(`/contacts_api/contacts`); // Make an API call to fetch contacts
     const data = await response.json(); // Parse JSON response
     setContacts(data.contacts); // Update the contacts state with fetched data
     console.log(data.contacts); // Log the fetched contacts for debugging

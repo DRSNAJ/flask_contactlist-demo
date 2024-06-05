@@ -5,4 +5,4 @@ metadata:
   labels:
     app: contactlist
 data:
-  contactlist-api: http://10.99.152.225:5000
+  contactlist-api: http://192.168.49.2:31516

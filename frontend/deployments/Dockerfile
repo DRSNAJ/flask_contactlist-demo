@@ -27,3 +27,4 @@ COPY --from=Build /frontend/build /usr/share/nginx/html
 
 # Copying the Nginx configuration file
 COPY default.conf /etc/nginx/conf.d/default.conf
+
